@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "521322567116",
+    "project_id": "bite-e6dbe",
+    "storage_bucket": "bite-e6dbe.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:521322567116:android:7a1e3ddfe4217723d2b969",
+        "android_client_info": {
+          "package_name": "com.bite"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "521322567116-kfb019p1p28n0b4psvjdrfd33g5vgsjf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmTUJYhABDfqBa0hPw5v6BXfXNNwgLWi4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "521322567116-kfb019p1p28n0b4psvjdrfd33g5vgsjf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
