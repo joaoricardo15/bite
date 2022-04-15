@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "android": "react-native run-android",
+    "android-prod": "react-native run-android --variant release",
     "ios": "react-native run-ios",
+    "ios-prod": "react-native run-ios --configuration Release",
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
@@ -13,6 +15,7 @@
     "@react-native-community/push-notification-ios": "^1.10.1",
     "@react-native-firebase/app": "^14.7.0",
     "@react-native-firebase/messaging": "^14.7.0",
+    "axios": "^0.26.1",
     "react": "17.0.2",
     "react-native": "0.68.0",
     "react-native-push-notification": "^8.1.1"

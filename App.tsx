@@ -15,6 +15,7 @@ import {
   Platform,
 } from 'react-native';
 
+import Axios from 'axios';
 import firebase from '@react-native-firebase/app';
 import {FirebaseMessagingTypes} from '@react-native-firebase/messaging';
 
@@ -37,7 +38,13 @@ const App = () => {
     firebase
       .messaging()
       .getToken()
-      .then(token => console.log('TOKEN --> ', token));
+      .then(response => {
+        console.log('TOKEN --> ', response);
+        Axios.post(
+          'https://uwakrljbi2.execute-api.eu-central-1.amazonaws.com/dev/user/token',
+          response,
+        );
+      });
   };
   const registerForRemoteMessages = () => {
     firebase
