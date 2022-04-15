@@ -1,15 +1,10 @@
 /**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * Generated with the TypeScript template
- * https://github.com/react-native-community/react-native-template-typescript
- *
  * @format
  */
 
-import React from 'react';
+import React, {useState} from 'react';
 import {
+  Image,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -17,40 +12,19 @@ import {
   Text,
   useColorScheme,
   View,
+  Platform,
 } from 'react-native';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import firebase from '@react-native-firebase/app';
+import {FirebaseMessagingTypes} from '@react-native-firebase/messaging';
 
 const Section: React.FC<{
   title: string;
 }> = ({children, title}) => {
-  const isDarkMode = useColorScheme() === 'dark';
   return (
     <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
+      <Text style={[styles.sectionTitle]}>{title}</Text>
+      <Text style={[styles.sectionDescription]}>{children}</Text>
     </View>
   );
 };
@@ -58,35 +32,90 @@ const Section: React.FC<{
 const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+  const [notification, setNotification] = useState<any>(null);
+  const getToken = () => {
+    firebase
+      .messaging()
+      .getToken()
+      .then(token => console.log('TOKEN --> ', token));
+  };
+  const registerForRemoteMessages = () => {
+    firebase
+      .messaging()
+      .registerDeviceForRemoteMessages()
+      .then(() => {
+        requestPermissions();
+      });
   };
 
+  const requestPermissions = () => {
+    firebase
+      .messaging()
+      .requestPermission()
+      .then((status: FirebaseMessagingTypes.AuthorizationStatus) => {
+        if (status === FirebaseMessagingTypes.AuthorizationStatus.AUTHORIZED) {
+          onMessage();
+        }
+      });
+  };
+
+  const onMessage = () => {
+    firebase.messaging().onMessage(response => {
+      console.log('ON_MESSAGE --> ', response);
+      setNotification(response.data);
+    });
+    firebase.messaging().setBackgroundMessageHandler(async response => {
+      console.log('ON_BACKGROUND_MESSAGE -->', response);
+      setNotification(response.data);
+    });
+    firebase.messaging().onNotificationOpenedApp(response => {
+      console.log('ON_NOTIFICATION_OPEN -->', response);
+      setNotification(response.data);
+    });
+    firebase
+      .messaging()
+      .getInitialNotification()
+      .then(async response => {
+        console.log('INITIAL_NOTIFICATIONS -->', response);
+        response?.data && setNotification(response.data);
+      });
+  };
+
+  const pushSetup = () => {
+    getToken();
+    if (Platform.OS === 'ios') {
+      registerForRemoteMessages();
+    } else {
+      onMessage();
+    }
+  };
+
+  pushSetup();
+
   return (
-    <SafeAreaView style={backgroundStyle}>
+    <SafeAreaView>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
+      <ScrollView contentInsetAdjustmentBehavior="automatic">
+        <View>
+          {!notification ? (
+            <Section title="Enjoy your bite!" />
+          ) : (
+            <View>
+              {notification.imageUrl && (
+                <View style={styles.imageContainer}>
+                  <Image
+                    style={styles.image}
+                    source={{
+                      uri: notification.imageUrl,
+                    }}
+                  />
+                </View>
+              )}
+              <Section title={notification.title}>
+                <Text style={styles.message}>{notification.message}</Text>
+              </Section>
+            </View>
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -107,9 +136,19 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '400',
   },
-  highlight: {
-    fontWeight: '700',
+  title: {
+    textAlign: 'center',
+    padding: '10px',
   },
+  imageContainer: {
+    flexDirection: 'row',
+  },
+  image: {
+    resizeMode: 'contain',
+    flex: 1,
+    aspectRatio: 1, // Your aspect ratio
+  },
+  message: {},
 });
 
 export default App;
