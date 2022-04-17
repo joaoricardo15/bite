@@ -1,4 +1,4 @@
-package com.bite.newarchitecture.modules;
+package com.baita.bite.newarchitecture.modules;
 
 import com.facebook.jni.HybridData;
 import com.facebook.react.ReactPackage;

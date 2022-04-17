@@ -1,4 +1,4 @@
-package com.bite.newarchitecture;
+package com.baita.bite.newarchitecture;
 
 import android.app.Application;
 import androidx.annotation.NonNull;
@@ -19,9 +19,9 @@ import com.facebook.react.fabric.CoreComponentsRegistry;
 import com.facebook.react.fabric.EmptyReactNativeConfig;
 import com.facebook.react.fabric.FabricJSIModuleProvider;
 import com.facebook.react.uimanager.ViewManagerRegistry;
-import com.bite.BuildConfig;
-import com.bite.newarchitecture.components.MainComponentsRegistry;
-import com.bite.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
+import com.baita.bite.BuildConfig;
+import com.baita.bite.newarchitecture.components.MainComponentsRegistry;
+import com.baita.bite.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
 import java.util.ArrayList;
 import java.util.List;
 

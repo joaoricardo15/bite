@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:521322567116:android:7a1e3ddfe4217723d2b969",
+        "mobilesdk_app_id": "1:521322567116:android:e6d87b0512590b4fd2b969",
         "android_client_info": {
-          "package_name": "com.bite"
+          "package_name": "com.baita.bite"
         }
       },
       "oauth_client": [
@@ -29,6 +29,13 @@
             {
               "client_id": "521322567116-kfb019p1p28n0b4psvjdrfd33g5vgsjf.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "521322567116-ghdis3cuigqisutktlock21p9cvtl47h.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.reactjs.native.example.bite"
+              }
             }
           ]
         }
