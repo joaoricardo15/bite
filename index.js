@@ -107,7 +107,7 @@ PushNotification.configure({
 
   // (optional) Called when Registered Action is pressed and invokeApp is false, if true onNotification will be called (Android)
   onAction: function (notification) {
-    console.log('### ACTION ###', notification);
+    console.log('### ACTION ### ', notification);
 
     const {action, id, subText} = notification;
 
