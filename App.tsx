@@ -2,7 +2,7 @@
  * @format
  */
 
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Image,
   SafeAreaView,
@@ -18,6 +18,13 @@ import {
 import Axios from 'axios';
 import firebase from '@react-native-firebase/app';
 import {FirebaseMessagingTypes} from '@react-native-firebase/messaging';
+import userStore from './src/services/userStore';
+
+import Auth0 from 'react-native-auth0';
+const auth0 = new Auth0({
+  domain: 'dev-yc4pbydg.us.auth0.com',
+  clientId: '7epbPhQU87v8oAtyVQarMOSQcsoRD4Et',
+});
 
 const Section: React.FC<{
   title: string;
@@ -38,13 +45,18 @@ const App = () => {
     firebase
       .messaging()
       .getToken()
-      .then(response => {
-        console.log('TOKEN --> ', response);
-        Axios.post(
-          'https://uwakrljbi2.execute-api.eu-central-1.amazonaws.com/dev/user/token',
-          response,
-        );
-      });
+      .then(token => {
+        console.log('TOKEN --> ', token);
+        userStore.getUser().then(user => {
+          console.log('USER --> ', user);
+          const {sub: userId} = user;
+          Axios.post(
+            `https://uwakrljbi2.execute-api.eu-central-1.amazonaws.com/dev/user/${userId}/token`,
+            {user, token},
+          );
+        });
+      })
+      .catch(e => console.log('# ERROR #', e));
   };
   const registerForRemoteMessages = () => {
     firebase
@@ -97,7 +109,32 @@ const App = () => {
     }
   };
 
-  pushSetup();
+  useEffect(() => {
+    userStore
+      .getToken()
+      .then(token => {
+        console.log('### INITIAL_ACCESS_TOKEN ###', token);
+        if (!token) {
+          auth0.webAuth
+            .authorize({scope: 'openid profile email'})
+            .then((credentials: {accessToken: string}) => {
+              console.log('### ACCESS_TOKEN ###', credentials.accessToken);
+              userStore.setToken(credentials.accessToken);
+              auth0.auth
+                .userInfo({token: credentials.accessToken})
+                .then((data: any) => {
+                  console.log('### USER_INFO ###', data);
+                  userStore.setUser(data);
+                  pushSetup();
+                })
+                .catch((e: any) => console.log('# ERROR #', e));
+            })
+            .catch((e: any) => console.log('# ERROR #', e));
+        }
+        pushSetup();
+      })
+      .catch(e => console.log('# ERROR #', e));
+  }, []);
 
   return (
     <SafeAreaView>

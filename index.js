@@ -10,6 +10,7 @@ AppRegistry.registerComponent(appName, () => App);
 
 import PushNotification, {Importance} from 'react-native-push-notification';
 import '@react-native-firebase/messaging';
+import userStore from './src/services/userStore';
 import Axios from 'axios';
 
 PushNotification.createChannel(
@@ -68,6 +69,10 @@ const pushDefaultConfig = {
 
 PushNotification.configure({
   // (required) Called when a remote is received or opened, or local notification is opened
+  onRegister: function (token) {
+    console.log('### FIREBASE_TOKEN ###', token);
+  },
+
   onNotification: function (notification) {
     const {
       finish,
@@ -152,10 +157,14 @@ PushNotification.configure({
       });
     }
 
-    Axios.post(
-      'https://uwakrljbi2.execute-api.eu-central-1.amazonaws.com/dev/user/activity',
-      notification,
-    );
+    userStore.getUser().then(user => {
+      const {sub: userId} = user;
+
+      Axios.post(
+        `https://uwakrljbi2.execute-api.eu-central-1.amazonaws.com/dev/user/${userId}/activity`,
+        {user, notification},
+      );
+    });
   },
 
   onRegistrationError: function (error) {
